@@ -1,0 +1,30 @@
+.container {
+    margin-top: 20px;
+}
+
+.template {
+    /* height: 300px; */
+    /* width: 200px; */
+    margin: 5px;
+}
+
+.template img {
+    height: 250px;
+    width: 190px;
+    cursor: pointer;
+    transition: 200ms;
+}
+
+.template img:active{
+    transform: translateY(2px);
+}
+
+.template img:hover{
+    border: 2px solid rgb(29, 180, 245);
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}

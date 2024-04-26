@@ -1,0 +1,36 @@
+.navbar{
+    padding: 10px;
+    background-color: #05ADB3 !important;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navitems{
+    width: 30%;
+    justify-content: center;
+    display: flex;
+    flex-direction: row;
+}
+
+.title{
+    color: rgb(9, 54, 86);
+    font-weight: 800;
+    font-size: 1.8rem;
+}
+
+.navlink{
+    text-decoration: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.1rem;
+    padding: 15px;
+}
+
+.navlink:hover{
+    text-decoration: none;
+    color: #a3ffcc;
+    transition: 10ms;
+}
+
