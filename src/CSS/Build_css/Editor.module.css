@@ -141,7 +141,7 @@
     background-color: #239ce2;
   }
   
-  .body button {
+  .save {
     width: fit-content;
     padding: 8px 16px;
     border-radius: 5px;
@@ -159,6 +159,6 @@
     transition: 200ms;
   }
 
-  .body button:active {
+  .save:active {
     transform: translateY(2px);
   }

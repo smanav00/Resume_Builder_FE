@@ -20,11 +20,15 @@
 }
 
 .template img:hover{
-    border: 2px solid rgb(29, 180, 245);
+    border: 2px solid rgb(181, 216, 231);
 }
 
 .main {
     display: flex;
     flex-direction: row;
     gap: 20px;
+}
+
+.active {
+    border: 2px solid rgb(29, 180, 245);
 }

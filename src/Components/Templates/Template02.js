@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 
 import styles from "../../CSS/Template_css/Template02.module.css"
 import { AtSign, Calendar, GitHub, Linkedin, MapPin, Paperclip, Phone } from "react-feather";
@@ -7,6 +7,7 @@ import { AtSign, Calendar, GitHub, Linkedin, MapPin, Paperclip, Phone } from "re
 const Template02 = forwardRef((props, ref) => {
     const sections = props.sections;
     const information = props.information;
+    const containerRef = useRef();
 
     // console.log("In Template");
     // console.log(information);
@@ -254,6 +255,14 @@ const Template02 = forwardRef((props, ref) => {
   };
 
     useEffect(() => {
+      const container = containerRef.current;
+      if (!props.fontSize || !container) return;
+
+      container.style.setProperty("--fontSize", props.fontSize);
+    }, [props.fontSize]);
+
+
+    useEffect(() => {
         // console.log("in the use effect");
         setColumns(
             [sections.project, sections.education, sections.summary, sections.workExp, sections.achievement]
@@ -261,7 +270,8 @@ const Template02 = forwardRef((props, ref) => {
     }, [])
 
     return (
-        <div ref={ref} className={styles.container}> 
+      <div ref={ref}>
+        <div ref={containerRef} className={styles.container}> 
             {/* {console.log("inside tempplate body")} */}
             <div className={styles.header}>
                 <p className={styles.heading}> {info.basicInfo?.detail?.name} </p>
@@ -308,6 +318,8 @@ const Template02 = forwardRef((props, ref) => {
                 </div>
             </div>
         </div>
+      </div>
+
     )
 });
 

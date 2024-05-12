@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 
 import styles from "../../CSS/Template_css/Template01.module.css"
 import { AtSign, Calendar, GitHub, Linkedin, MapPin, Paperclip, Phone } from "react-feather";
@@ -12,6 +12,8 @@ const Template01 = forwardRef((props, ref) => {
     // console.log(information);
 
     const [columns, setColumns] = useState([[], []])
+
+    const containerRef = useRef();
 
     const info = {
         basicInfo : information[sections.basicInfo],
@@ -352,8 +354,16 @@ const Template01 = forwardRef((props, ref) => {
         ])
     }, [])
 
+    useEffect(() => {
+      const container = containerRef.current;
+      if (!props.fontSize || !container) return;
+
+      container.style.setProperty("--fontSize", props.fontSize);
+    }, [props.fontSize]);
+
     return (
-        <div ref={ref} className={styles.container}> 
+      <div ref={ref}>
+          <div ref={containerRef} className={styles.container}> 
             {/* {console.log("inside tempplate body")} */}
             <div className={styles.header}>
                 <p className={styles.heading}> {info.basicInfo?.detail?.name} </p>
@@ -406,6 +416,7 @@ const Template01 = forwardRef((props, ref) => {
                 </div>
             </div>
         </div>
+      </div>
     )
 });
 

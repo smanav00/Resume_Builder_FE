@@ -19,6 +19,14 @@
       /* gap: 50px; */
   }
 
+  .template {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    max-width: 50%;
+    gap: 20px;
+  }
+
   .heading{
     color: #063159;
     font-weight:bolder;

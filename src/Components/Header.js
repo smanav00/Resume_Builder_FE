@@ -4,6 +4,7 @@ import resumeSvg from "../Assets/resume.svg";
 
 import styles from "../CSS/Header.module.css";
 import { Link } from "react-router-dom";
+import Login from "../user/Login";
 
 
 function Header() {
@@ -19,7 +20,7 @@ function Header() {
         <p className={styles.subheading}>
           Craft a <span>Resume</span> that stands out!
         </p>
-        <Link to="/build">
+        <Link to="/login">
             <button> Create Resume </button>
         </Link>
       </div>

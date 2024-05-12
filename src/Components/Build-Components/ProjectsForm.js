@@ -10,6 +10,7 @@ const ProjectForm = (props) => {
 
     function handlePointUpdate(value, index)  {
         const tempVal = {...values};
+    if (!Array.isArray(tempVal.points)) tempVal.points = [];
         tempVal.points[index] = value;
         setValues(tempVal);
     }

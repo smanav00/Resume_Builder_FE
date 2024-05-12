@@ -9,11 +9,45 @@ import SummaryForm from "./SummaryForm";
 import OtherForm from "./OtherForm";
 import InputControl from "./InputControl";
 import { ArrowLeft, ArrowRight, X } from "react-feather"
+import Alert from '@mui/material/Alert';
+import { IconButton, CloseIcon } from "@mui/material";
+import { z } from "zod"
+import SendAlert from "./SendAlert";
+import axios from "axios";
+
 
 
 const Editor = (props) => {
     const sections = props.sections;
     const information = props.information;
+
+    //defining zod schemas
+    const emailSchema = z.string().email();
+    const phoneSchema = z.string().refine(value => {
+      const phoneRegex = /^\+?\d{10,12}$/;
+      return phoneRegex.test(value);
+    })
+    const linkSchema = z.string().refine(value => {
+      // Regular expression to match common URL formats
+      const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      return urlRegex.test(value);
+    })
+    const dateRangeSchema = z.object({
+      startDate: z.string(),
+      endDate: z.string()
+    }).refine(({ startDate, endDate }) => {
+        return startDate <= endDate;
+    })
+
+    // corresponding filedcheck alert state variables
+    const [emailOpen, setEmailOpen] = useState(false);
+    const [phoneOpen, setPhoneOpen] = useState(false);
+    const [linkedinOpen, setLinkedinOpen] = useState(false);
+    const [githubOpen, setGithubOpen] = useState(false);
+    const [certificationLinkOpen, setCertificationLinkOpen] = useState(false);
+    const [dateOpen, setDateOpen] = useState(false);
+    const [dateMsg, setDateMsg] = useState("");
+
 
     const allSections = Object.keys(sections)
     const initKey = Object.keys(sections)[0];
@@ -39,6 +73,8 @@ const Editor = (props) => {
       phone: activeInformation?.detail?.phone || "",
       email: activeInformation?.detail?.email || "",
     })
+
+
     
     const generateBody = () => {
         switch (sections[activeSection]) {
@@ -78,9 +114,50 @@ const Editor = (props) => {
         setActiveSection(key)
     }
 
+    const performValidation = () => {
+      let isValid = true;
+      if(values.email !== "" && !emailSchema.safeParse(values.email).success){
+        setEmailOpen(true);
+        isValid = false;
+      }
+      if(values.phone !== "" && !phoneSchema.safeParse(values.phone).success){
+        setPhoneOpen(true)
+        isValid = false;
+      }
+      if(values.linkedin !== "" && !linkSchema.safeParse(values.linkedin).success){
+        setLinkedinOpen(true)
+        isValid = false;
+      }
+      if(values.github !== "" && !linkSchema.safeParse(values.github).success){
+        setGithubOpen(true)
+        isValid = false;
+      }
+      if(values.certificationLink !== "" && !linkSchema.safeParse(values.certificationLink).success){
+        setCertificationLinkOpen(true)
+        isValid = false;
+      }
+      if(values.endDate !== "" && values.startDate === ""){
+        console.log("in error");
+        isValid = false;
+        setDateOpen(true);
+        setDateMsg("Start Date is Not Selected.")
+      }
+      else if(values.endDate !== "" && values.startDate !== "" && 
+        !dateRangeSchema.safeParse({startDate: values.startDate, endDate: values.endDate}).success){
+        isValid = false;
+        setDateOpen(true);
+        setDateMsg("End Date Can Not Be Earlier than the Start Date.")
+      }
+      return isValid;
+    }
+
     const handleSubmission = () => {
-      console.log(values);
-      // console.log(information);
+      console.log("start: ", values.startDate);
+      console.log("end: ", values.endDate);
+      if(!performValidation ()){
+        return;
+      }
+
       switch (sections[activeSection]) {
         case sections.basicInfo:{
           const tempDetail = {
@@ -210,6 +287,11 @@ const Editor = (props) => {
         default :
           return null;
       }
+
+      const config = {
+        headers : {'authorization' : localStorage.getItem('token')}
+      }
+      axios.post("http://localhost:5000/api/auth/resumedata", information, config);
     }
 
     const handleAddNew = () => {
@@ -278,10 +360,10 @@ const Editor = (props) => {
         points: activeInfo?.details
           ? activeInfo.details[0]?.points
             ? [...activeInfo.details[0]?.points]
-            : []
+            : ""
           : activeInfo?.points
           ? [...activeInfo.points]
-          : [],
+          : "",
         title: activeInfo?.details
           ? activeInfo.details[0]?.title || ""
           : activeInfo?.detail?.title || "",
@@ -314,7 +396,7 @@ const Editor = (props) => {
         location: activeInfo.details[activeDetailIndex]?.location || "",
         startDate: activeInfo.details[activeDetailIndex]?.startDate || "",
         endDate: activeInfo.details[activeDetailIndex]?.endDate || "",
-        points: activeInfo.details[activeDetailIndex]?.points || [],
+        points: activeInfo.details[activeDetailIndex]?.points || "",
         title: activeInfo.details[activeDetailIndex]?.title || "",
         linkedin: activeInfo.details[activeDetailIndex]?.linkedin || "",
         github: activeInfo.details[activeDetailIndex]?.github || "",
@@ -380,7 +462,22 @@ const Editor = (props) => {
 
                 {generateBody()}
 
-                   <button onClick={handleSubmission}>Save</button>
+                <button className={styles.save} onClick={handleSubmission}>Save</button>
+                <SendAlert 
+                  emailAlert = {emailOpen}
+                  setEmailAlert = {setEmailOpen}
+                  phoneAlert = {phoneOpen}
+                  setPhoneAlert = {setPhoneOpen}
+                  linkedinAlert = {linkedinOpen}
+                  setLinkedinAlert = {setLinkedinOpen}
+                  githubAlert = {githubOpen}
+                  setGithubAlert = {setGithubOpen}
+                  certificationLinkAlert = {certificationLinkOpen}
+                  setCertificationLinkAlert = {setCertificationLinkOpen}
+                  dateAlert = {dateOpen}
+                  setDateAlert = {setDateOpen}
+                  dateMsg = {dateMsg}
+                />
             </div>
             {/* <div className={styles.switchbtn}>
                 <button onClick={handleBack}><ArrowLeft/> Back</button>
