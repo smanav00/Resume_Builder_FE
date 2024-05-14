@@ -47,6 +47,7 @@ const Editor = (props) => {
     const [certificationLinkOpen, setCertificationLinkOpen] = useState(false);
     const [dateOpen, setDateOpen] = useState(false);
     const [dateMsg, setDateMsg] = useState("");
+    const [reqOpen, setReqOpen] = useState(false);
 
 
     const allSections = Object.keys(sections)
@@ -116,6 +117,10 @@ const Editor = (props) => {
 
     const performValidation = () => {
       let isValid = true;
+      if(values.email === "" || values.name === "" || values.phone === ""){
+        setReqOpen(true);
+        isValid = false;
+      }
       if(values.email !== "" && !emailSchema.safeParse(values.email).success){
         setEmailOpen(true);
         isValid = false;
@@ -152,9 +157,10 @@ const Editor = (props) => {
     }
 
     const handleSubmission = () => {
-      console.log("start: ", values.startDate);
-      console.log("end: ", values.endDate);
+      // console.log("start: ", values.startDate);
+      // console.log("end: ", values.endDate);
       if(!performValidation ()){
+        console.log('error data', values);
         return;
       }
 
@@ -287,11 +293,16 @@ const Editor = (props) => {
         default :
           return null;
       }
-
+      const token = localStorage.getItem('rc_token');
       const config = {
-        headers : {'authorization' : localStorage.getItem('token')}
+        headers : {'authorization' : token}
       }
-      axios.post("http://localhost:5000/api/auth/resumedata", information, config);
+      console.log('editor', props.isLogged);
+      if(props.fcnt === 2){
+        axios.post("http://localhost:5000/api/auth/resumedata", information, config).then(()=>{
+          console.log('saving info', information);
+        })
+      }
     }
 
     const handleAddNew = () => {
@@ -336,7 +347,7 @@ const Editor = (props) => {
       // console.log(activeInfo);
       setActiveDetailIndex(0);
       setValues({
-        name: activeInfo?.detail?.name || "",
+        name: information?.[sections.basicInfo]?.detail?.name || "",
         overview: activeInfo?.details
           ? activeInfo.details[0]?.overview || ""
           : "",
@@ -371,8 +382,8 @@ const Editor = (props) => {
         github: activeInfo?.details
           ? activeInfo.details[0]?.github || ""
           : activeInfo?.detail?.github || "",
-        phone: activeInfo?.detail?.phone || "",
-        email: activeInfo?.detail?.email || "",
+        phone: information?.[sections.basicInfo]?.detail?.phone || "",
+        email: information?.[sections.basicInfo]?.detail?.email || "",
         summary: typeof activeInfo?.detail !== "object" ? activeInfo.detail : "",
         other: typeof activeInfo?.detail !== "object" ? activeInfo.detail : "",
       });
@@ -388,6 +399,9 @@ const Editor = (props) => {
   
       const activeInfo = information[sections[activeSection]];
       setValues({
+        name: information?.[sections.basicInfo]?.detail?.name || "",
+        phone: information?.[sections.basicInfo]?.detail?.phone || "",
+        email: information?.[sections.basicInfo]?.detail?.email || "",
         overview: activeInfo.details[activeDetailIndex]?.overview || "",
         link: activeInfo.details[activeDetailIndex]?.link || "",
         certificationLink:
@@ -477,6 +491,8 @@ const Editor = (props) => {
                   dateAlert = {dateOpen}
                   setDateAlert = {setDateOpen}
                   dateMsg = {dateMsg}
+                  reqOpen = {reqOpen}
+                  setReqOpen = {setReqOpen}
                 />
             </div>
             {/* <div className={styles.switchbtn}>

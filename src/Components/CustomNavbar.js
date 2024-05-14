@@ -8,13 +8,13 @@ const CustomNavabr = (props) => {
         const navigate = useNavigate();
 
         function handleClick(){
-            localStorage.removeItem('token');
+            localStorage.removeItem('rc_token');
             props.setIsLogged(false);
             navigate('/');
         }
         return (
             <>
-               <div className='navbar'>
+               <div className={'navbar ' + `${logstatus ? 'loggedin' : ''}`}>
                     <h2 className='title'>Resume Crafter</h2>
                     <div className='navitems'>
                         <Link className='navlink' to="/"> <p >Home</p> </Link>

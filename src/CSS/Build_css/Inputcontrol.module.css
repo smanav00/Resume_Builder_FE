@@ -24,3 +24,13 @@
   input:focus {
     border: 1px solid #239ce2;
   }
+
+  .required {
+    color: red;
+    margin-left: 3px;
+  }
+
+  .basic {
+    display: flex;
+    flex-direction: row;
+  }

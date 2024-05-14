@@ -3,7 +3,7 @@ import basestyle from "./Base.module.css";
 import loginstyle from "./Login.module.css";
 import axios from "axios";
 import { useNavigate, NavLink } from "react-router-dom";
-import Build from "../Components/Build-Components/Builder";
+
 const Login = (props) => {
   const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState({});
@@ -44,6 +44,7 @@ const Login = (props) => {
     // }
   };
   
+
   useEffect(() => {
     if(props.isLogged){
       navigate('/build')
@@ -54,12 +55,15 @@ const Login = (props) => {
       axios.post("http://localhost:5000/api/user/login", user).then((res) => {
         console.log(res);
         alert("Logged In!");
-        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('rc_token', res.data.token);
+        const name = res.data.fname + ' ' + res.data.lname
+        props.setUserName(name.toUpperCase());
         props.setIsLogged(true);
         navigate('/build')
       });
     }
   }, [formErrors]);
+
 
   
   return (

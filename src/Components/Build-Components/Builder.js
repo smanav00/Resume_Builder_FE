@@ -10,8 +10,9 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material"
 import {SelectChangeEvent} from "@mui/material/Select"
 import Login from "../../user/Login"
 import axios from "axios"
+import Welcome from "./Welcome"
 
-const Build = () =>{
+const Build = (props) =>{
     const sections = {
         basicInfo: "Basic Info",
         workExp: "Work Experience",
@@ -60,36 +61,52 @@ const Build = () =>{
         sectionTitle: sections.other,
         detail: "",
       },
-  };
-    const token = localStorage.getItem('token');
+    };
+    const[fetchedData, setFetchedData] = useState();
+    const[fcnt, setfcnt] = useState(0);
+    const token = localStorage.getItem('rc_token');
     const config = {
         headers : {'authorization' : token}
     }
-    axios.get("http://localhost:5000/api/auth/resumedata", config).then((data) => {
-        const dbData = data?.data?.infodetail
+    if(props.isLogged && token && fcnt === 0){
+      axios.get("http://localhost:5000/api/auth/resumedata", config).then((data) => {
+        const dbData = data.data.infodetail
         console.log("fetched data", dbData);
-        if(dbData)
+        if(dbData != null){
           initData = dbData;
+          setFetchedData(dbData);
+        }
     })
+    setfcnt(2);
+    }
+    
     const [activeTempIndex, setActiveTempIndex] = useState(0);
     const resumeRef = useRef(); 
     const [resumeInformation, setResumeInformation] = useState(initData);
-
+    console.log('resume', resumeInformation);
     const [fontsize, setFontsize] = useState('1rem');
+
 
     const handleFontChange = (event: SelectChangeEvent) => {
       setFontsize(event.target.value);
     };
 
-    // useEffect(() => {
-    //   console.log("inside builder efffect");
-    //   console.log(resumeInformation);
-    //   },
-    // [resumeInformation])
+    useEffect(() => {
+      console.log("inside builder efffect");
+      // console.log(resumeInformation);
+      if(fetchedData)
+        setResumeInformation(fetchedData)
+      },
+    [fetchedData])
 
-
+    console.log('builder',props.userName)
+      
     return (
         <div className={styles.container}>
+            {props.isLogged ? 
+                <Welcome userName = {props.userName}/>
+              : ""
+            }
             <div>
               <TemplateSection 
                 activeTemplate = {activeTempIndex}
@@ -133,8 +150,9 @@ const Build = () =>{
                   sections = {sections} 
                   information = {resumeInformation}
                   setInformation = {setResumeInformation}
+                  fcnt = {fcnt}
                 />
-                {activeTempIndex == 0 ?
+                {activeTempIndex === 0 ?
                   <Template01 
                     ref={resumeRef}
                     sections = {sections}

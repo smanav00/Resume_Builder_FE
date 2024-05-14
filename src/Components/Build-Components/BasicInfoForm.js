@@ -54,7 +54,7 @@ const BasicInfoForm = (props) => {
                   }
                 />
                 <InputControl
-                label="Enter phone"
+                label="Enter Phone"
                 value={values.phone}
                 placeholder="Enter your phone number"
                   onChange={(event) =>

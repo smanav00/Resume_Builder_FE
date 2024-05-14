@@ -11,6 +11,7 @@ const SendAlert = (props) => {
     const linkedinOpen = props.linkedinAlert;
     const certificationLinkOpen = props.certificationLinkAlert;
     const dateOpen = props.dateAlert;
+    const reqOpen = props.reqOpen;
 
     return (
         <div className={styles.container}>
@@ -83,6 +84,18 @@ const SendAlert = (props) => {
                 }}
                 >
                 {props.dateMsg}
+                </Alert>
+            )}
+
+            {reqOpen && (
+                <Alert
+                variant="outlined"
+                severity="error"
+                onClose={() => {
+                    props.setReqOpen(false)
+                }}
+                >
+                Required Fields Are Empty.
                 </Alert>
             )}
         </div>
